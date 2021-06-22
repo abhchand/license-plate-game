@@ -1,0 +1,13 @@
+default: &default
+  adapter: postgresql
+  encoding: UTF-8
+  host: <%= ENV.fetch('POSTGRES_HOST', 'localhost') %>
+  port: <%= ENV.fetch('POSTGRES_PORT', 5432) %>
+  username: <%= ENV.fetch('DATABASE_USERNAME', ENV['USER']) %>
+  password: <%= ENV.fetch('DATABASE_PASSWORD', '') %>
+  pool: <%= ENV.fetch('DATABASE_CONNECTION_POOL', 30) %>
+  timeout: <%= ENV.fetch('DATABASE_TIMEOUT', 5000) %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch('DATABASE_NAME', 'license_plate_game_development') %>

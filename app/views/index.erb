@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>License Plate Game</title>
+        <link rel="stylesheet" href="application.css" type="text/css" />
+        <link rel="stylesheet" media="screen" href="http://fonts.googleapis.com/css?family=Open+Sans" type="text/css">
+        <script src="application.js"></script>
+    </head>
+
+    <body>
+      <% if flash[:error] || flash[:notice] %>
+        <div class="flash">
+          <%= flash[:error] || flash[:notice] %>
+        </div>
+      <% end %>
+
+      <div class="content">
+        <h1>The License Plate Game</h1>
+        <img src="license-plate.png" height="120px" />
+
+        <!-- Score -->
+        <section class="scores">
+          <ul class="score">
+            <% @players.each do |player| %>
+            <li>
+              <div class="name"><%= player.name %></div>
+              <div class="circle">
+                <div class="count--uniq"><span class="numerator"><%= @scores_unique[player.id] || 0 %></span>&nbsp;/&nbsp;<span class="denominator"><%= Sighting::STATES.keys.count %></span></div>
+                <div class="count--total"><%= @scores[player.id] || 0 %> total</div>
+              </div>
+            </li>
+            <% end %>
+          </ul>
+        </section>
+
+        <!-- Create `Sighting` -->
+        <section class="sighting">
+          <h3>What state did you see?</h3>
+          <ul>
+            <% Sighting::STATES.each do |state, long_state| %>
+            <button data-id="<%= state %>" data-name="<%= long_state %>" class="state-btn cta">
+              <%= state %>
+            </button>
+            <% end %>
+          </ul>
+
+          <!-- (Modal) -->
+          <div class="modal sighting-modal">
+            <div class="modal-content">
+              Who saw the <b class="state-name"></b> plate?
+
+              <form method="post" action="/sightings">
+                <!-- The hidden field's value will by dynamically set by JS -->
+                <input class="field--state" type="hidden" value="" name="sighting[state]" />
+
+                <% @players.each_with_index do |player, idx| %>
+                <input
+                  class="field--player-id"
+                  type="radio"
+                  id="<%= player.id %>"
+                  name="sighting[player_id]"
+                  value="<%= player.id %>" />
+                <label for="<%= player.id %>"><%= player.name %></label><br>
+                <% end %>
+
+                <!-- Render submit btn as disabled by default -->
+                <div class="form-submit">
+                  <input class='modal-btn--submit' type="submit" value="submit" disabled="disabled" />
+                  <input class='modal-btn--close' type="button" value="cancel" />
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Sightings -->
+        <section class="recent-sightings">
+          <h3>Recent Sightings</h3>
+          <table>
+            <tr>
+              <td>DATE</td>
+              <td>PLAYER</td>
+              <td>STATE</td>
+              <td></td>
+            </tr>
+            <% @sightings.each do |sighting| %>
+            <tr>
+              <td><%= sighting.formatted_local_time %></td>
+              <td><%= sighting.player.name %></td>
+              <td><%= Sighting::STATES[sighting.state] %></td>
+              <td><a href="/sightings/<%= sighting.id %>/delete" class="delete">delete</a></td>
+            </tr>
+            <% end %>
+          </table>
+
+          <% if @sightings_hidden > 0 %>
+          <p>+<%= @sightings_hidden %> previous (not shown)</p>
+          <% end %>
+        </section>
+      </div>
+    </body>
+</html>
