@@ -1,3 +1,6 @@
+# Specifying a `DATABASE_URL` will override any of the fields
+# configured in this file
+
 default: &default
   adapter: postgresql
   encoding: UTF-8
@@ -11,3 +14,7 @@ default: &default
 development:
   <<: *default
   database: <%= ENV.fetch('DATABASE_NAME', 'license_plate_game_development') %>
+
+production:
+  <<: *default
+  database: <%= ENV.fetch('DATABASE_NAME', 'license_plate_game_production') %>
