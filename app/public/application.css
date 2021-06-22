@@ -146,6 +146,9 @@ ul {
 .sighting-modal form {
   margin-top: 30px;
 }
+.sighting-modal form label {
+  font-size: 24px;
+}
 .sighting-modal .form-submit {
   margin-top: 30px;
 }
